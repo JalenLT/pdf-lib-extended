@@ -4,6 +4,23 @@
   "description": "This project extends the capabilities of the pdf-lib JavaScript library by providing a set of helper functions that simplify common PDF manipulation tasks. It includes utilities for drawing and formatting text, images, and shapes within PDF documents, allowing for more advanced customization and automation. The class-based architecture, designed as a toolkit, ensures that developers can easily integrate these enhanced features into their existing workflows. With this extension, users can streamline the creation of dynamic and complex PDFs with minimal effort.",
   "main": "index.js",
   "type": "module",
+  "keywords": [
+    "pdf",
+    "pdf-lib",
+    "pdf-generation",
+    "pdf-creation",
+    "javascript",
+    "pdf-extension",
+    "pdf-manipulation",
+    "html-to-pdf",
+    "pdf-lib-extended",
+    "pdf-customization",
+    "pdf-table",
+    "pdf-watermark",
+    "pdf-text",
+    "pdf-drawing",
+    "pdf-library"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
