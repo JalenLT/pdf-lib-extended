@@ -29,10 +29,10 @@ class PDFLibExtended {
         this.#color = rgb(0, 0, 0);
         this.#currentNodes = [];
         this.#margin = {
-            left: 25,
-            right: 25,
-            top: 25,
-            bottom: 25
+            left: 40,
+            right: 40,
+            top: 40,
+            bottom: 40
         };
     }
 
@@ -124,7 +124,7 @@ class PDFLibExtended {
      */
     setMargin(arr) {
         try {
-            if (typeof arr != 'object' || arr === null || !Array.isArray(arr)) throw new Error("The value supplied is not a JSON/Array: ", arr);
+            if (typeof arr != 'object' || arr === null || Array.isArray(arr)) throw new Error("The value supplied is not a JSON/Object: ", arr);
             this.#margin = {
                 ...this.#margin,
                 ...arr
@@ -374,8 +374,8 @@ class PDFLibExtended {
     /**
      *### Moves the pointer to the next line of the current page
      */
-    nextLine() {
-        this.getCurrentPage().moveTo(this.getMargin().left, this.getCurrentPage().getY() - this.getTextSize());
+    nextLine(padding = 0) {
+        this.getCurrentPage().moveTo(this.getMargin().left, this.getCurrentPage().getY() - this.getTextSize() - padding);
     }
 
     /**
@@ -709,6 +709,7 @@ class PDFLibExtended {
             align: "left",
             color: this.getColor(),
             size: this.getTextSize(),
+            indent: false,
             ...options,
         }
         if (defaultOptions.range && !parser) this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
@@ -776,6 +777,11 @@ class PDFLibExtended {
                 /*** DRAW TEXT ***/
                 let splitText = text.data.split(" ");
                 splitText.forEach(string => {
+                    if(defaultOptions.indent){
+                        this.getCurrentPage().moveRight(30);
+                        defaultOptions.indent = false;
+                    }
+
                     string += " ";
                     let wordWidth = this.getCurrentFont().widthOfTextAtSize(string, defaultOptions.size);
                     if(wordWidth + this.getCurrentPage().getX() >= maxWidth){
