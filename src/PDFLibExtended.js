@@ -475,6 +475,8 @@ class PDFLibExtended {
             color: this.getColor(),
             opacity: 1,
             padding: 0,
+            wordWrap: true,
+            characterWrap: false,
             ...options
         };
         if(options.range) this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
@@ -483,7 +485,11 @@ class PDFLibExtended {
         let currentWidth = 0;
         let currentLine = "";
 
-        text = text.split(" ");
+        if(wordWrap){
+            text = text.split(" ");
+        }else{
+            text = text.split("");
+        }
 
         text.forEach((string, i) => {
             let wordWidth = this.getCurrentFont().widthOfTextAtSize(string, defaultOptions.size);
@@ -505,7 +511,9 @@ class PDFLibExtended {
                 currentWidth = 0;
             }
 
-            currentLine += string + " ";
+            if(wordWrap){
+                currentLine += string + " ";
+            }
             currentWidth += wordWidth;
 
             // If it's the last word, draw the remaining line
