@@ -474,6 +474,7 @@ class PDFLibExtended {
             size: this.getTextSize(),
             color: this.getColor(),
             opacity: 1,
+            padding: 0,
             ...options
         };
         if(options.range) this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
@@ -498,7 +499,7 @@ class PDFLibExtended {
                 });
 
                 // Move to the next line
-                this.nextLine();
+                this.nextLine(defaultOptions.padding);
                 this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
                 currentLine = "";
                 currentWidth = 0;
@@ -608,7 +609,7 @@ class PDFLibExtended {
         }
 
         if(defaultOptions.newLine){
-            this.nextLine();
+            this.nextLine(defaultOptions.padding);
             page.moveTo(page.getX(), y - Number(defaultOptions.height) - change - defaultOptions.size - defaultOptions.padding);
         }
         else page.moveTo(x + width + defaultOptions.padding, y - defaultOptions.size);
@@ -710,6 +711,7 @@ class PDFLibExtended {
             color: this.getColor(),
             size: this.getTextSize(),
             indent: false,
+            padding: 0,
             ...options,
         }
         if (defaultOptions.range && !parser) this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
@@ -722,7 +724,7 @@ class PDFLibExtended {
                     switch (node.nodeName) {
                         case "P":
                             this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY() - defaultOptions.margin);
-                            this.nextLine();
+                            this.nextLine(defaultOptions.padding);
                             this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
                             break;
                         case "STRONG":
@@ -736,7 +738,7 @@ class PDFLibExtended {
                         case "UL":
                             break;
                         case "LI":
-                            this.nextLine();
+                            this.nextLine(defaultOptions.padding);
                             this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
                             this.getCurrentPage().moveRight(this.getCurrentNodes().filter(value => value === "UL").length * this.getMargin().left);
                             this.drawText("• ", { size: defaultOptions.size, color: defaultOptions.color });
@@ -755,7 +757,7 @@ class PDFLibExtended {
                                 });
                                 tableData.push(tableRow);
                             });
-                            this.nextLine();
+                            this.nextLine(defaultOptions.padding);
                             this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
                             this.drawTable(tableHead, tableData, {
                                 range: {left: defaultOptions.range.left, right: defaultOptions.range.right},
@@ -785,7 +787,7 @@ class PDFLibExtended {
                     string += " ";
                     let wordWidth = this.getCurrentFont().widthOfTextAtSize(string, defaultOptions.size);
                     if(wordWidth + this.getCurrentPage().getX() >= maxWidth){
-                        this.nextLine();
+                        this.nextLine(defaultOptions.padding);
                         this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
                     }
                     this.drawText(string, {
