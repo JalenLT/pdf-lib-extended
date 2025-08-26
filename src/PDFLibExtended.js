@@ -513,6 +513,8 @@ class PDFLibExtended {
 
             if(defaultOptions.wordWrap){
                 currentLine += string + " ";
+            }else{
+                currentLine += string;
             }
             currentWidth += wordWidth;
 
