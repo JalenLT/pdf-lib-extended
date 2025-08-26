@@ -485,7 +485,7 @@ class PDFLibExtended {
         let currentWidth = 0;
         let currentLine = "";
 
-        if(wordWrap){
+        if(defaultOptions.wordWrap){
             text = text.split(" ");
         }else{
             text = text.split("");
@@ -511,7 +511,7 @@ class PDFLibExtended {
                 currentWidth = 0;
             }
 
-            if(wordWrap){
+            if(defaultOptions.wordWrap){
                 currentLine += string + " ";
             }
             currentWidth += wordWidth;
