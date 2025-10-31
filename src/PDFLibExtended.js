@@ -906,16 +906,27 @@ class PDFLibExtended {
      * @param {base64} base64Image
      * @param {number} imageScale
      */
-    async addImage(x, y, base64Image, imageScale = 1) {
+    async addImage(x, y, base64Image, imageScale = 1, options = {}) {
+        let defaultOptions = {
+            width: null,
+            height: null,
+            borderWidth: 2,
+            ...options
+        };
+
         if (base64Image.includes(",")) base64Image = base64Image.split(",")[1];
         let imageBytes = Uint8Array.from(atob(base64Image), c => c.charCodeAt(0));
         let embeddedImage = await this.getPDF().embedPng(imageBytes);
-        let { width, height } = embeddedImage.scale(imageScale);
+        if(defaultOptions.width == null && defaultOptions.height == null){
+           let { width, height } = embeddedImage.scale(imageScale);
+           defaultOptions.width = width;
+           defaultOptions.height = height;
+        }
         this.getCurrentPage().drawImage(embeddedImage, {
             x: x,
             y: y,
-            width: width,
-            height: height,
+            width: defaultOptions.width,
+            height: defaultOptions.height,
         });
     }
 
