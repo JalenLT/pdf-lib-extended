@@ -464,15 +464,15 @@ class PDFLibExtended {
      * @param {import('pdf-lib').RGB} options.color - The color of the text
      * @param {number} options.opacity - The opacity of the text
      */
-    drawParagraph(pdf, text, options = {}) {
+    drawParagraph(text, options = {}) {
         const defaultOptions = {
             align: "left",
             range: {
-            left: pdf.getMargin().left,
-            right: pdf.getCurrentPage().getWidth() - pdf.getMargin().right
+            left: this.getMargin().left,
+            right: this.getCurrentPage().getWidth() - this.getMargin().right
             },
-            size: pdf.getTextSize(),
-            color: pdf.getColor(),
+            size: this.getTextSize(),
+            color: this.getColor(),
             opacity: 1,
             padding: 0,          // extra spacing between lines
             wordWrap: true,
@@ -481,7 +481,7 @@ class PDFLibExtended {
         };
 
         // Always move to paragraph start (left edge of range)
-        pdf.getCurrentPage().moveTo(defaultOptions.range.left, pdf.getCurrentPage().getY());
+        this.getCurrentPage().moveTo(defaultOptions.range.left, pdf.getCurrentPage().getY());
 
         const maxWidth = defaultOptions.range.right - defaultOptions.range.left;
 
@@ -497,21 +497,21 @@ class PDFLibExtended {
             const piece = needsSpace ? (" " + tok) : tok;
 
             // Measure exactly what we plan to add
-            const pieceWidth = pdf.getCurrentFont().widthOfTextAtSize(piece, defaultOptions.size);
+            const pieceWidth = this.getCurrentFont().widthOfTextAtSize(piece, defaultOptions.size);
 
             // If this piece would overflow, draw current line and move down
             if (currentLine && (currentWidth + pieceWidth > maxWidth)) {
-            pdf.drawText(currentLine, {
+            this.drawText(currentLine, {
                 size: defaultOptions.size,
                 color: defaultOptions.color,
                 opacity: defaultOptions.opacity,
                 align: defaultOptions.align,
                 range: defaultOptions.range
             });
-            pdf.nextLine(defaultOptions.padding);
-            pdf.getCurrentPage().moveTo(defaultOptions.range.left, pdf.getCurrentPage().getY());
+            this.nextLine(defaultOptions.padding);
+            this.getCurrentPage().moveTo(defaultOptions.range.left, pdf.getCurrentPage().getY());
             currentLine = tok; // start new line with the token (no leading space)
-            currentWidth = pdf.getCurrentFont().widthOfTextAtSize(tok, defaultOptions.size);
+            currentWidth = this.getCurrentFont().widthOfTextAtSize(tok, defaultOptions.size);
             } else {
             // Safe to add to this line
             currentLine += piece;
@@ -520,7 +520,7 @@ class PDFLibExtended {
 
             // Last token: flush
             if (i === tokens.length - 1 && currentLine) {
-            pdf.drawText(currentLine, {
+            this.drawText(currentLine, {
                 size: defaultOptions.size,
                 color: defaultOptions.color,
                 opacity: defaultOptions.opacity,
