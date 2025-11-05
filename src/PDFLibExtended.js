@@ -464,69 +464,69 @@ class PDFLibExtended {
      * @param {import('pdf-lib').RGB} options.color - The color of the text
      * @param {number} options.opacity - The opacity of the text
      */
-    drawParagraph(text, options = {}) {
-        let defaultOptions = {
+    drawParagraph(pdf, text, options = {}) {
+        const defaultOptions = {
             align: "left",
             range: {
-                left: this.getMargin().left,
-                right: this.getCurrentPage().getWidth() - this.getMargin().right
+            left: pdf.getMargin().left,
+            right: pdf.getCurrentPage().getWidth() - pdf.getMargin().right
             },
-            size: this.getTextSize(),
-            color: this.getColor(),
+            size: pdf.getTextSize(),
+            color: pdf.getColor(),
             opacity: 1,
-            padding: 0,
+            padding: 0,          // extra spacing between lines
             wordWrap: true,
             characterWrap: false,
             ...options
         };
-        if(options.range) this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
 
-        let maxWidth = defaultOptions.range.right - defaultOptions.range.left;
-        let currentWidth = 0;
+        // Always move to paragraph start (left edge of range)
+        pdf.getCurrentPage().moveTo(defaultOptions.range.left, pdf.getCurrentPage().getY());
+
+        const maxWidth = defaultOptions.range.right - defaultOptions.range.left;
+
+        // Tokenize
+        const tokens = defaultOptions.wordWrap ? text.split(" ") : text.split("");
+
         let currentLine = "";
+        let currentWidth = 0;
 
-        if(defaultOptions.wordWrap){
-            text = text.split(" ");
-        }else{
-            text = text.split("");
-        }
+        tokens.forEach((tok, i) => {
+            // Build what we would append for this token on this line
+            const needsSpace = defaultOptions.wordWrap && currentLine.length > 0;
+            const piece = needsSpace ? (" " + tok) : tok;
 
-        text.forEach((string, i) => {
-            let wordWidth = this.getCurrentFont().widthOfTextAtSize(string, defaultOptions.size);
+            // Measure exactly what we plan to add
+            const pieceWidth = pdf.getCurrentFont().widthOfTextAtSize(piece, defaultOptions.size);
 
-            // Check if adding this word would overflow
-            if (currentWidth + wordWidth > maxWidth) {
-                this.drawText(currentLine.trim(), {
-                    size: defaultOptions.size,
-                    color: defaultOptions.color,
-                    opacity: defaultOptions.opacity,
-                    align: defaultOptions.align,
-                    range: defaultOptions.range
-                });
-
-                // Move to the next line
-                this.nextLine(defaultOptions.padding);
-                this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
-                currentLine = "";
-                currentWidth = 0;
+            // If this piece would overflow, draw current line and move down
+            if (currentLine && (currentWidth + pieceWidth > maxWidth)) {
+            pdf.drawText(currentLine, {
+                size: defaultOptions.size,
+                color: defaultOptions.color,
+                opacity: defaultOptions.opacity,
+                align: defaultOptions.align,
+                range: defaultOptions.range
+            });
+            pdf.nextLine(defaultOptions.padding);
+            pdf.getCurrentPage().moveTo(defaultOptions.range.left, pdf.getCurrentPage().getY());
+            currentLine = tok; // start new line with the token (no leading space)
+            currentWidth = pdf.getCurrentFont().widthOfTextAtSize(tok, defaultOptions.size);
+            } else {
+            // Safe to add to this line
+            currentLine += piece;
+            currentWidth += pieceWidth;
             }
 
-            if(defaultOptions.wordWrap){
-                currentLine += string + " ";
-            }else{
-                currentLine += string;
-            }
-            currentWidth += wordWidth;
-
-            // If it's the last word, draw the remaining line
-            if (i === text.length - 1) {
-                this.drawText(currentLine.trim(), {
-                    size: defaultOptions.size,
-                    color: defaultOptions.color,
-                    opacity: defaultOptions.opacity,
-                    align: defaultOptions.align,
-                    range: defaultOptions.range
-                });
+            // Last token: flush
+            if (i === tokens.length - 1 && currentLine) {
+            pdf.drawText(currentLine, {
+                size: defaultOptions.size,
+                color: defaultOptions.color,
+                opacity: defaultOptions.opacity,
+                align: defaultOptions.align,
+                range: defaultOptions.range
+            });
             }
         });
     }
