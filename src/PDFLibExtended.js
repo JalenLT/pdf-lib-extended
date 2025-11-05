@@ -481,7 +481,7 @@ class PDFLibExtended {
         };
 
         // Always move to paragraph start (left edge of range)
-        this.getCurrentPage().moveTo(defaultOptions.range.left, pdf.getCurrentPage().getY());
+        this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
 
         const maxWidth = defaultOptions.range.right - defaultOptions.range.left;
 
@@ -509,7 +509,7 @@ class PDFLibExtended {
                 range: defaultOptions.range
             });
             this.nextLine(defaultOptions.padding);
-            this.getCurrentPage().moveTo(defaultOptions.range.left, pdf.getCurrentPage().getY());
+            this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
             currentLine = tok; // start new line with the token (no leading space)
             currentWidth = this.getCurrentFont().widthOfTextAtSize(tok, defaultOptions.size);
             } else {
