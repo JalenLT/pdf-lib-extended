@@ -586,7 +586,7 @@ class PDFLibExtended {
                         ? 
                             defaultOptions.height
                         : 
-                            change - defaultOptions.padding
+                            change - defaultOptions.padding - 2
                 ),
                 color: defaultOptions.backgroundColor
             });
