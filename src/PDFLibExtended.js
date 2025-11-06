@@ -576,7 +576,7 @@ class PDFLibExtended {
         change -= page.getY() - defaultOptions.size;
 
         /*** BACKGROUND ***/
-        if(backgroundColor !== null){
+        if(defaultOptions.backgroundColor !== null){
             page.drawRectangle({
                 x: x,
                 y: y,
