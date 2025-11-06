@@ -560,6 +560,7 @@ class PDFLibExtended {
             align: "left",
             newLine: true,
             size: this.getTextSize(),
+            backgroundColor: null,
             color: this.getColor(),
             lineThickness: 1,
             padding: 4,
@@ -568,7 +569,32 @@ class PDFLibExtended {
         };
         let page = this.getCurrentPage();
         page.moveTo(x, y);
+
+        /*** TEXT ***/
         let change = page.getY();
+        this.drawParagraph(text, {range: {left: x, right: x + width}, align: defaultOptions.align, size: defaultOptions.size, color: defaultOptions.color});
+        change -= page.getY() - defaultOptions.size;
+
+        /*** BACKGROUND ***/
+        if(backgroundColor !== null){
+            page.drawRectangle({
+                x: x,
+                y: y,
+                width: width,
+                height: (
+                    (defaultOptions.height) 
+                        ? 
+                            defaultOptions.height
+                        : 
+                            change - defaultOptions.padding
+                ),
+                color: defaultOptions.backgroundColor
+            });
+        }
+
+        /*** TEXT ***/
+        page.moveTo(x, y);
+        change = page.getY();
         this.drawParagraph(text, {range: {left: x, right: x + width}, align: defaultOptions.align, size: defaultOptions.size, color: defaultOptions.color});
         change -= page.getY() - defaultOptions.size;
 
@@ -652,7 +678,9 @@ class PDFLibExtended {
             align: "center",
             border: true,
             size: this.getTextSize(),
+            backgroundColor: null,
             color: this.getColor(),
+            lineThickness: 1,
             ...options
         };
         if (options.range) this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
@@ -670,8 +698,10 @@ class PDFLibExtended {
                     border: defaultOptions.border,
                     align: defaultOptions.align,
                     size: defaultOptions.size + defaultOptions.headerDifference,
+                    backgroundColor: defaultOptions.backgroundColor,
                     color: defaultOptions.color,
-                    newLine: (i === header.length - 1) ? true : false
+                    newLine: (i === header.length - 1) ? true : false,
+                    lineThickness: defaultOptions.lineThickness
                 });
             });
         }
@@ -685,8 +715,10 @@ class PDFLibExtended {
                         border: defaultOptions.border,
                         align: defaultOptions.align,
                         size: defaultOptions.size + defaultOptions.headerDifference,
+                        backgroundColor: defaultOptions.backgroundColor,
                         color: defaultOptions.color,
-                        newLine: (i === header.length - 1) ? true : false
+                        newLine: (i === header.length - 1) ? true : false,
+                        lineThickness: defaultOptions.lineThickness
                     });
                 });
             });
