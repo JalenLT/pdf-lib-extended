@@ -573,7 +573,7 @@ class PDFLibExtended {
         /*** TEXT ***/
         let change = page.getY();
         this.drawParagraph(text, {range: {left: x, right: x + width}, align: defaultOptions.align, size: defaultOptions.size, color: defaultOptions.color});
-        change -= page.getY() - defaultOptions.size;
+        change -= page.getY() - defaultOptions.size - 4;
 
         /*** BACKGROUND ***/
         if(defaultOptions.backgroundColor !== null){
@@ -596,7 +596,7 @@ class PDFLibExtended {
         page.moveTo(x, y);
         change = page.getY();
         this.drawParagraph(text, {range: {left: x, right: x + width}, align: defaultOptions.align, size: defaultOptions.size, color: defaultOptions.color});
-        change -= page.getY() - defaultOptions.size;
+        change -= page.getY() - defaultOptions.size - 4;
 
         y += defaultOptions.size;
 
