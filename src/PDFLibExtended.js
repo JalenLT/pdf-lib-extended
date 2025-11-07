@@ -577,17 +577,12 @@ class PDFLibExtended {
 
         /*** BACKGROUND ***/
         if(defaultOptions.backgroundColor !== null){
+            let height = defaultOptions.height ? defaultOptions.height : change + defaultOptions.padding;
             page.drawRectangle({
                 x: x,
-                y: y,
+                y: y - (height / 2),
                 width: width,
-                height: (
-                    (defaultOptions.height) 
-                        ? 
-                            defaultOptions.height
-                        : 
-                            change + defaultOptions.padding
-                ),
+                height: height,
                 color: defaultOptions.backgroundColor
             });
         }
