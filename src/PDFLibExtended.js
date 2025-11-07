@@ -593,7 +593,7 @@ class PDFLibExtended {
         }
 
         /*** TEXT ***/
-        page.moveTo(x, y - defaultOptions.padding);
+        page.moveTo(x, y + defaultOptions.padding);
         change = page.getY();
         this.drawParagraph(text, {range: {left: x, right: x + width}, align: defaultOptions.align, size: defaultOptions.size, color: defaultOptions.color});
         change -= page.getY() - defaultOptions.size - 4;
