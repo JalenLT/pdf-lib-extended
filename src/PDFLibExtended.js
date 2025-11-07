@@ -580,7 +580,7 @@ class PDFLibExtended {
             let height = defaultOptions.height ? defaultOptions.height : change + defaultOptions.padding;
             page.drawRectangle({
                 x: x,
-                y: y - (height / 2),
+                y: y - (defaultOptions.height ? defaultOptions.height : (change / 2) + defaultOptions.padding),
                 width: width,
                 height: height,
                 color: defaultOptions.backgroundColor
