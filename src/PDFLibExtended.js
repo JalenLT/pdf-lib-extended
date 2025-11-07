@@ -646,7 +646,7 @@ class PDFLibExtended {
 
         if(defaultOptions.newLine){
             this.nextLine(defaultOptions.padding);
-            page.moveTo(page.getX(), y - Number(defaultOptions.height) - change - defaultOptions.size - defaultOptions.padding);
+            page.moveTo(page.getX(), y - Number(defaultOptions.height) - change - defaultOptions.size - defaultOptions.padding - 5);
         }
         else page.moveTo(x + width + defaultOptions.padding, y - defaultOptions.size);
     }
