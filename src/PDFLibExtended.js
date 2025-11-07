@@ -603,7 +603,7 @@ class PDFLibExtended {
         if(defaultOptions.border){
             page.drawRectangle({
                 x: x,
-                y: y - drawParagraphResponse.height + defaultOptions.size,
+                y: y - drawParagraphResponse.height + defaultOptions.size - defaultOptions.padding,
                 width: width,
                 height: drawParagraphResponse.height,
                 color: defaultOptions.backgroundColor,
@@ -614,7 +614,7 @@ class PDFLibExtended {
         }else{
             page.drawRectangle({
                 x: x,
-                y: y - drawParagraphResponse.height + defaultOptions.size,
+                y: y - drawParagraphResponse.height + defaultOptions.size - defaultOptions.padding,
                 width: width,
                 height: drawParagraphResponse.height,
                 color: defaultOptions.backgroundColor,
@@ -635,7 +635,7 @@ class PDFLibExtended {
         });
 
         if(defaultOptions.newLine){
-            page.moveTo(page.getX(), y - drawParagraphResponse.height);
+            page.moveTo(page.getX(), y - drawParagraphResponse.height - defaultOptions.padding);
         }
         else page.moveTo(x + width, y);
     }
