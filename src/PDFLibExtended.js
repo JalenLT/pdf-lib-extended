@@ -372,10 +372,18 @@ class PDFLibExtended {
     }
 
     /**
-     *### Moves the pointer to the next line of the current page
+     *### Moves the pointer to the next line of the current page, adjusting the Y position by the provided padding amount
+     * @param {number} padding - The amount of padding to add to the line
+     * @returns {object} - An object containing the added space, the new X position, and the new Y position
      */
     nextLine(padding = 0) {
-        this.getCurrentPage().moveTo(this.getMargin().left, this.getCurrentPage().getY() - this.getTextSize() - padding);
+        const addedSpace = this.getTextSize() + padding;
+        this.getCurrentPage().moveTo(this.getMargin().left, this.getCurrentPage().getY() - addedSpace);
+        return {
+            addedSpace: addedSpace,
+            x: this.getMargin().left,
+            y: this.getCurrentPage().getY()
+        }
     }
 
     /**
@@ -468,8 +476,8 @@ class PDFLibExtended {
         const defaultOptions = {
             align: "left",
             range: {
-            left: this.getMargin().left,
-            right: this.getCurrentPage().getWidth() - this.getMargin().right
+                left: this.getMargin().left,
+                right: this.getCurrentPage().getWidth() - this.getMargin().right
             },
             size: this.getTextSize(),
             color: this.getColor(),
@@ -490,6 +498,7 @@ class PDFLibExtended {
 
         let currentLine = "";
         let currentWidth = 0;
+        let totalHeight = defaultOptions.size;
 
         tokens.forEach((tok, i) => {
             // Build what we would append for this token on this line
@@ -501,21 +510,23 @@ class PDFLibExtended {
 
             // If this piece would overflow, draw current line and move down
             if (currentLine && (currentWidth + pieceWidth > maxWidth)) {
-            this.drawText(currentLine, {
-                size: defaultOptions.size,
-                color: defaultOptions.color,
-                opacity: defaultOptions.opacity,
-                align: defaultOptions.align,
-                range: defaultOptions.range
-            });
-            this.nextLine(defaultOptions.padding);
-            this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
-            currentLine = tok; // start new line with the token (no leading space)
-            currentWidth = this.getCurrentFont().widthOfTextAtSize(tok, defaultOptions.size);
+                this.drawText(currentLine, {
+                    size: defaultOptions.size,
+                    color: defaultOptions.color,
+                    opacity: defaultOptions.opacity,
+                    align: defaultOptions.align,
+                    range: defaultOptions.range
+                });
+                let nextLineData = this.nextLine(defaultOptions.padding);
+                totalHeight += nextLineData.addedSpace;
+
+                this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
+                currentLine = tok; // start new line with the token (no leading space)
+                currentWidth = this.getCurrentFont().widthOfTextAtSize(tok, defaultOptions.size);
             } else {
-            // Safe to add to this line
-            currentLine += piece;
-            currentWidth += pieceWidth;
+                // Safe to add to this line
+                currentLine += piece;
+                currentWidth += pieceWidth;
             }
 
             // Last token: flush
@@ -529,6 +540,10 @@ class PDFLibExtended {
             });
             }
         });
+
+        return {
+            height: totalHeight
+        };
     }
 
     /**
@@ -556,7 +571,6 @@ class PDFLibExtended {
     drawCell(text, x, y, width, options = {}){
         let defaultOptions = {
             height: null,
-            border: false,
             align: "left",
             newLine: true,
             size: this.getTextSize(),
@@ -564,86 +578,66 @@ class PDFLibExtended {
             color: this.getColor(),
             lineThickness: 1,
             padding: 4,
+            border: false,
+            borderColor: this.getColor(),
             borderOpacity: 0.3,
             ...options
         };
-        let page = this.getCurrentPage();
+
+        const page = this.getCurrentPage();
+
+        /*** DRAW TEXT ***/
         page.moveTo(x, y);
+        let drawParagraphResponse = this.drawParagraph(text, {
+            align: defaultOptions.align,
+            range: {
+                left: x,
+                right: x + width
+            },
+            size: defaultOptions.size,
+            color: defaultOptions.color,
+            opacity: 1,
+        });
 
-        /*** TEXT ***/
-        let change = page.getY();
-        this.drawParagraph(text, {range: {left: x, right: x + width}, align: defaultOptions.align, size: defaultOptions.size, color: defaultOptions.color});
-        change -= page.getY() - defaultOptions.size - 4;
-
-        /*** BACKGROUND ***/
-        if(defaultOptions.backgroundColor !== null){
-            let height = defaultOptions.height ? defaultOptions.height : change + defaultOptions.padding;
+        /*** DRAW BACKGROUND ***/
+        if(defaultOptions.border){
             page.drawRectangle({
                 x: x,
-                y: y - (defaultOptions.height ? defaultOptions.height : (change / 2) + defaultOptions.padding),
+                y: y - drawParagraphResponse.height + defaultOptions.size,
                 width: width,
-                height: height,
-                color: defaultOptions.backgroundColor
+                height: drawParagraphResponse.height,
+                color: defaultOptions.backgroundColor,
+                borderWidth: defaultOptions.lineThickness,
+                borderColor: defaultOptions.borderColor,
+                borderOpacity: defaultOptions.borderOpacity
+            });
+        }else{
+            page.drawRectangle({
+                x: x,
+                y: y - drawParagraphResponse.height + defaultOptions.size,
+                width: width,
+                height: drawParagraphResponse.height,
+                color: defaultOptions.backgroundColor,
             });
         }
 
-        /*** TEXT ***/
-        page.moveTo(x, y + defaultOptions.padding);
-        change = page.getY();
-        this.drawParagraph(text, {range: {left: x, right: x + width}, align: defaultOptions.align, size: defaultOptions.size, color: defaultOptions.color});
-        change -= page.getY() - defaultOptions.size - 4;
-
-        y += defaultOptions.size;
-
-        /*** BORDERS ***/
-        if(defaultOptions.border){
-            // TOP
-            if(defaultOptions.border === true || defaultOptions.border.includes("t") || defaultOptions.border.includes("T")){
-                page.drawLine({
-                    start: {x: x - defaultOptions.padding, y: y},
-                    end: {x: x + width, y: y},
-                    thickness: defaultOptions.lineThickness,
-                    color: defaultOptions.color,
-                    opacity: defaultOptions.borderOpacity
-                });
-            }
-            // BOTTOM
-            if(defaultOptions.border === true || defaultOptions.border.includes("b") || defaultOptions.border.includes("B")){
-                page.drawLine({
-                    start: {x: x - defaultOptions.padding, y: ((defaultOptions.height) ? y - defaultOptions.height : y - change - defaultOptions.padding)},
-                    end: {x: x + width, y: ((defaultOptions.height) ? y - defaultOptions.height : y - change -defaultOptions.padding)},
-                    thickness: defaultOptions.lineThickness,
-                    color: defaultOptions.color,
-                    opacity: defaultOptions.borderOpacity
-                });
-            }
-            // LEFT
-            if(defaultOptions.border === true || defaultOptions.border.includes("l") || defaultOptions.border.includes("L")){
-                page.drawLine({
-                    start: {x: x - defaultOptions.padding, y: y + (defaultOptions.lineThickness / 2)},
-                    end: {x: x - defaultOptions.padding, y: ((defaultOptions.height) ? y - defaultOptions.height - (defaultOptions.lineThickness / 2) : y - change - defaultOptions.padding - (defaultOptions.lineThickness / 2))},
-                    thickness: defaultOptions.lineThickness,
-                    color: defaultOptions.color,
-                    opacity: defaultOptions.borderOpacity
-                });
-            }
-            // RIGHT
-            if(defaultOptions.border === true || defaultOptions.border.includes("r") || defaultOptions.border.includes("R")){
-                page.drawLine({
-                    start: {x: x + width, y: y + (defaultOptions.lineThickness / 2)},
-                    end: {x: x + width, y: ((defaultOptions.height) ? y - defaultOptions.height - (defaultOptions.lineThickness / 2) : y - change - defaultOptions.padding - (defaultOptions.lineThickness / 2))},
-                    thickness: defaultOptions.lineThickness,
-                    color: defaultOptions.color,
-                    opacity: defaultOptions.borderOpacity
-                });
-            }
-        }
+        /*** DRAW TEXT ***/
+        page.moveTo(x, y);
+        drawParagraphResponse = this.drawParagraph(text, {
+            align: defaultOptions.align,
+            range: {
+                left: x,
+                right: x + width
+            },
+            size: defaultOptions.size,
+            color: defaultOptions.color,
+            opacity: 1,
+        });
 
         if(defaultOptions.newLine){
-            this.nextLine(defaultOptions.padding);
-            page.moveTo(page.getX(), y - Number(defaultOptions.height) - change - defaultOptions.size - defaultOptions.padding - 5);
+            page.moveTo(page.getX(), y - drawParagraphResponse.height);
         }
-        else page.moveTo(x + width + defaultOptions.padding, y - defaultOptions.size);
+        else page.moveTo(x + width, y);
     }
 
     /**
