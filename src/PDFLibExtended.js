@@ -634,10 +634,10 @@ class PDFLibExtended {
             opacity: 1,
         });
 
-        if(defaultOptions.newLine){
-            page.moveTo(page.getX(), y - drawParagraphResponse.height - defaultOptions.padding);
-        }
-        else page.moveTo(x + width, y);
+        return {
+            height: drawParagraphResponse.height,
+            padding: defaultOptions.padding
+        };
     }
 
     /**
