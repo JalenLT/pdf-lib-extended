@@ -587,7 +587,7 @@ class PDFLibExtended {
         const page = this.getCurrentPage();
 
         /*** DRAW TEXT ***/
-        page.moveTo(x, y);
+        page.moveTo(x, y - (defaultOptions.padding / 2));
         let drawParagraphResponse = this.drawParagraph(text, {
             align: defaultOptions.align,
             range: {
@@ -622,7 +622,7 @@ class PDFLibExtended {
         }
 
         /*** DRAW TEXT ***/
-        page.moveTo(x, y);
+        page.moveTo(x, y - (defaultOptions.padding / 2));
         drawParagraphResponse = this.drawParagraph(text, {
             align: defaultOptions.align,
             range: {
