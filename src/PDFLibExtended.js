@@ -603,7 +603,7 @@ class PDFLibExtended {
         if(defaultOptions.border){
             page.drawRectangle({
                 x: x,
-                y: y - drawParagraphResponse.height + defaultOptions.size - defaultOptions.padding,
+                y: y - ((defaultOptions.height) ? defaultOptions.height : drawParagraphResponse.height) + defaultOptions.size - defaultOptions.padding,
                 width: width,
                 height: (defaultOptions.height) ? defaultOptions.height : drawParagraphResponse.height,
                 color: defaultOptions.backgroundColor,
@@ -614,7 +614,7 @@ class PDFLibExtended {
         }else{
             page.drawRectangle({
                 x: x,
-                y: y - drawParagraphResponse.height + defaultOptions.size - defaultOptions.padding,
+                y: y - ((defaultOptions.height) ? defaultOptions.height : drawParagraphResponse.height) + defaultOptions.size - defaultOptions.padding,
                 width: width,
                 height: (defaultOptions.height) ? defaultOptions.height : drawParagraphResponse.height,
                 color: defaultOptions.backgroundColor,
