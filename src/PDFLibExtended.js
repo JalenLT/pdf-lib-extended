@@ -419,7 +419,7 @@ class PDFLibExtended {
                     opacity: defaultOptions.opacity
                 });
                 if(defaultOptions.textDecoration === "underline"){
-                    this.pdf.drawLine({
+                    this.getCurrentPage().drawLine({
                         start: { x: this.getCurrentPage().getX(), y: this.getCurrentPage().getY() - 2 },
                         end: { x: this.getCurrentPage().getX() + this.getCurrentFont().widthOfTextAtSize(text, defaultOptions.size), y: this.getCurrentPage().getY() - 2 },
                         thickness: 1,
@@ -446,7 +446,7 @@ class PDFLibExtended {
                     opacity: defaultOptions.opacity
                 });
                 if(defaultOptions.textDecoration === "underline"){
-                    this.pdf.drawLine({
+                    this.getCurrentPage().drawLine({
                         start: { x: xCenterPosition, y: this.getCurrentPage().getY() - 2 },
                         end: { x: xCenterPosition + this.getCurrentFont().widthOfTextAtSize(text, defaultOptions.size), y: this.getCurrentPage().getY() - 2 },
                         thickness: 1,
@@ -473,7 +473,7 @@ class PDFLibExtended {
                     opacity: defaultOptions.opacity
                 });
                 if(defaultOptions.textDecoration === "underline"){
-                    this.pdf.drawLine({
+                    this.getCurrentPage().drawLine({
                         start: { x: xRightPosition, y: this.getCurrentPage().getY() - 2 },
                         end: { x: xRightPosition + textWidth, y: this.getCurrentPage().getY() - 2 },
                         thickness: 1,
