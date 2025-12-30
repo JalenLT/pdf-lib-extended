@@ -407,6 +407,7 @@ class PDFLibExtended {
             size: this.getTextSize(),
             color: this.getColor(),
             opacity: 1,
+            textDecoration: null,
             ...options,
         };
 
@@ -417,6 +418,15 @@ class PDFLibExtended {
                     color: defaultOptions.color,
                     opacity: defaultOptions.opacity
                 });
+                if(defaultOptions.textDecoration === "underline"){
+                    this.pdf.drawLine({
+                        start: { x: this.getCurrentPage().getX(), y: this.getCurrentPage().getY() - 2 },
+                        end: { x: this.getCurrentPage().getX() + this.getCurrentFont().widthOfTextAtSize(text, defaultOptions.size), y: this.getCurrentPage().getY() - 2 },
+                        thickness: 1,
+                        color: defaultOptions.color,
+                        opacity: defaultOptions.opacity
+                    });
+                }
                 break;
 
             case "center":
@@ -435,6 +445,15 @@ class PDFLibExtended {
                     color: defaultOptions.color,
                     opacity: defaultOptions.opacity
                 });
+                if(defaultOptions.textDecoration === "underline"){
+                    this.pdf.drawLine({
+                        start: { x: xCenterPosition, y: this.getCurrentPage().getY() - 2 },
+                        end: { x: xCenterPosition + this.getCurrentFont().widthOfTextAtSize(text, defaultOptions.size), y: this.getCurrentPage().getY() - 2 },
+                        thickness: 1,
+                        color: defaultOptions.color,
+                        opacity: defaultOptions.opacity
+                    });
+                }
                 this.getCurrentPage().moveTo(currentPositionCenter.x, currentPositionCenter.y);
                 break;
 
@@ -453,6 +472,15 @@ class PDFLibExtended {
                     color: defaultOptions.color,
                     opacity: defaultOptions.opacity
                 });
+                if(defaultOptions.textDecoration === "underline"){
+                    this.pdf.drawLine({
+                        start: { x: xRightPosition, y: this.getCurrentPage().getY() - 2 },
+                        end: { x: xRightPosition + textWidth, y: this.getCurrentPage().getY() - 2 },
+                        thickness: 1,
+                        color: defaultOptions.color,
+                        opacity: defaultOptions.opacity
+                    });
+                }
                 this.getCurrentPage().moveTo(currentPositionRight.x, currentPositionRight.y);
                 break;
 
