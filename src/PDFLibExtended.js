@@ -513,6 +513,7 @@ class PDFLibExtended {
             padding: 0,          // extra spacing between lines
             wordWrap: true,
             characterWrap: false,
+            textDecoration: null,
             ...options
         };
 
@@ -543,7 +544,8 @@ class PDFLibExtended {
                     color: defaultOptions.color,
                     opacity: defaultOptions.opacity,
                     align: defaultOptions.align,
-                    range: defaultOptions.range
+                    range: defaultOptions.range,
+                    textDecoration: defaultOptions.textDecoration
                 });
                 let nextLineData = this.nextLine(defaultOptions.padding);
                 totalHeight += nextLineData.addedSpace;
@@ -564,7 +566,8 @@ class PDFLibExtended {
                 color: defaultOptions.color,
                 opacity: defaultOptions.opacity,
                 align: defaultOptions.align,
-                range: defaultOptions.range
+                range: defaultOptions.range,
+                textDecoration: defaultOptions.textDecoration
             });
             }
         });
