@@ -377,7 +377,7 @@ class PDFLibExtended {
      * @returns {object} - An object containing the added space, the new X position, and the new Y position
      */
     nextLine(padding = null) {
-        const addedSpace = 0;
+        let addedSpace = 0;
         if(padding && !isNaN(Number(padding))) {
             addedSpace += Number(padding);
         }else{
