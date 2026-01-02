@@ -376,8 +376,13 @@ class PDFLibExtended {
      * @param {number} padding - The amount of padding to add to the line
      * @returns {object} - An object containing the added space, the new X position, and the new Y position
      */
-    nextLine(padding = 0) {
-        const addedSpace = this.getTextSize() + padding;
+    nextLine(padding = null) {
+        const addedSpace = 0;
+        if(padding && !isNaN(Number(padding))) {
+            addedSpace += Number(padding);
+        }else{
+            addedSpace += this.getTextSize();
+        }
         this.getCurrentPage().moveTo(this.getMargin().left, this.getCurrentPage().getY() - addedSpace);
         return {
             addedSpace: addedSpace,
