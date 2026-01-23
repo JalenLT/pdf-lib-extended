@@ -532,6 +532,7 @@ class PDFLibExtended {
 
         let currentLine = "";
         let currentWidth = 0;
+        let biggestWidth = 0;
         let totalHeight = defaultOptions.size;
 
         tokens.forEach((tok, i) => {
@@ -558,27 +559,30 @@ class PDFLibExtended {
                 this.getCurrentPage().moveTo(defaultOptions.range.left, this.getCurrentPage().getY());
                 currentLine = tok; // start new line with the token (no leading space)
                 currentWidth = this.getCurrentFont().widthOfTextAtSize(tok, defaultOptions.size);
+                if(currentWidth > biggestWidth) biggestWidth = currentWidth;
             } else {
                 // Safe to add to this line
                 currentLine += piece;
                 currentWidth += pieceWidth;
+                if(currentWidth > biggestWidth) biggestWidth = currentWidth;
             }
 
             // Last token: flush
             if (i === tokens.length - 1 && currentLine) {
-            this.drawText(currentLine, {
-                size: defaultOptions.size,
-                color: defaultOptions.color,
-                opacity: defaultOptions.opacity,
-                align: defaultOptions.align,
-                range: defaultOptions.range,
-                textDecoration: defaultOptions.textDecoration
-            });
+                this.drawText(currentLine, {
+                    size: defaultOptions.size,
+                    color: defaultOptions.color,
+                    opacity: defaultOptions.opacity,
+                    align: defaultOptions.align,
+                    range: defaultOptions.range,
+                    textDecoration: defaultOptions.textDecoration
+                });
             }
         });
 
         return {
-            height: totalHeight
+            height: totalHeight,
+            width: biggestWidth
         };
     }
 
