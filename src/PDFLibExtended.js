@@ -656,7 +656,7 @@ class PDFLibExtended {
                 x: x,
                 y: y - ((defaultOptions.height) ? defaultOptions.height : drawParagraphResponse.height) + defaultOptions.size + defaultOptions.padding,
                 width: width,
-                height: (defaultOptions.height) ? defaultOptions.height : drawParagraphResponse.height - defaultOptions.padding,
+                height: (defaultOptions.height) ? defaultOptions.height : drawParagraphResponse.height + 100,
                 color: defaultOptions.backgroundColor,
             });
         }
